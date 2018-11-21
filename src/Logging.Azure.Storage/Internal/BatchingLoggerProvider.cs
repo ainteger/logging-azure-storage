@@ -15,9 +15,9 @@ namespace Logging.Azure.Storage.Internal
 		private int? QueueSize { get; }
 		private int? BatchSize { get; }
 
-		private BlockingCollection<LogMessage> _messageQueue;
-		private Task _outputTask;
-		private CancellationTokenSource _cancellationTokenSource;
+		private BlockingCollection<LogMessage> MessageQueue { get; set; }
+		private Task OutputTask { get; set; }
+		private CancellationTokenSource CancellationTokenSource { get; set; }
 
 		protected BatchingLoggerProvider(IOptions<BatchingLoggerOptions> options)
 		{
@@ -44,11 +44,11 @@ namespace Logging.Azure.Storage.Internal
 
 		private async Task ProcessLogQueue(object state)
 		{
-			while (!_cancellationTokenSource.IsCancellationRequested)
+			while (!CancellationTokenSource.IsCancellationRequested)
 			{
 				var limit = BatchSize ?? int.MaxValue;
 
-				while (limit > 0 && _messageQueue.TryTake(out var message))
+				while (limit > 0 && MessageQueue.TryTake(out var message))
 				{
 					CurrentBatch.Add(message);
 					limit--;
@@ -58,7 +58,7 @@ namespace Logging.Azure.Storage.Internal
 				{
 					try
 					{
-						await WriteMessagesAsync(CurrentBatch, _cancellationTokenSource.Token);
+						await WriteMessagesAsync(CurrentBatch, CancellationTokenSource.Token);
 					}
 					catch
 					{
@@ -68,7 +68,7 @@ namespace Logging.Azure.Storage.Internal
 					CurrentBatch.Clear();
 				}
 
-				await IntervalAsync(Interval, _cancellationTokenSource.Token);
+				await IntervalAsync(Interval, CancellationTokenSource.Token);
 			}
 		}
 
@@ -79,11 +79,11 @@ namespace Logging.Azure.Storage.Internal
 
 		internal void AddMessage(DateTimeOffset timestamp, string message)
 		{
-			if (!_messageQueue.IsAddingCompleted)
+			if (!MessageQueue.IsAddingCompleted)
 			{
 				try
 				{
-					_messageQueue.Add(new LogMessage { Message = message, Timestamp = timestamp }, _cancellationTokenSource.Token);
+					MessageQueue.Add(new LogMessage { Message = message, Timestamp = timestamp }, CancellationTokenSource.Token);
 				}
 				catch
 				{
@@ -94,12 +94,12 @@ namespace Logging.Azure.Storage.Internal
 
 		private void Start()
 		{
-			_messageQueue = QueueSize == null ?
+			MessageQueue = QueueSize == null ?
 				new BlockingCollection<LogMessage>(new ConcurrentQueue<LogMessage>()) :
 				new BlockingCollection<LogMessage>(new ConcurrentQueue<LogMessage>(), QueueSize.Value);
 
-			_cancellationTokenSource = new CancellationTokenSource();
-			_outputTask = Task.Factory.StartNew<Task>(
+			CancellationTokenSource = new CancellationTokenSource();
+			OutputTask = Task.Factory.StartNew<Task>(
 				ProcessLogQueue,
 				null,
 				TaskCreationOptions.LongRunning);
@@ -107,12 +107,12 @@ namespace Logging.Azure.Storage.Internal
 
 		private void Stop()
 		{
-			_cancellationTokenSource.Cancel();
-			_messageQueue.CompleteAdding();
+			CancellationTokenSource.Cancel();
+			MessageQueue.CompleteAdding();
 
 			try
 			{
-				_outputTask.Wait(Interval);
+				OutputTask.Wait(Interval);
 			}
 			catch (TaskCanceledException)
 			{
