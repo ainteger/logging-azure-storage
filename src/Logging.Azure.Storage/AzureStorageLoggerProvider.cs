@@ -50,26 +50,33 @@ namespace Logging.Azure.Storage
 					return;
 				}
 
-				using (var streamWriter = new MemoryStream())
-				{
-					var position = 0;
-					await streamWriter.WriteAsync(blob, position, blob.Length);
-					position += blob.Length;
-
-					foreach (var item in group)
-					{
-						var message = Encoding.ASCII.GetBytes(item.Message);
-						await streamWriter.WriteAsync(message, position, message.Length);
-						position += message.Length;
-					}
-
-					var data = streamWriter.ToArray();
-					await BlobHandler.PutBlobAsync(ContainerName, fullName, data);
-				}
-
+				var data = Combine(blob, group).ToArray();
+				await BlobHandler.PutBlobAsync(ContainerName, fullName, data);
 			}
 
 			await RollFilesAsync();
+		}
+
+
+		private IEnumerable<byte> Combine(byte[] currentBlob, IGrouping<(int, int, int, int), LogMessage> logMessages)
+		{
+			if (currentBlob != null)
+			{
+				foreach (byte b in currentBlob)
+				{
+					yield return b;
+				}
+			}
+
+			foreach (var logMessage in logMessages)
+			{
+				var data = Encoding.ASCII.GetBytes(logMessage.Message);
+
+				foreach (byte b in data)
+				{
+					yield return b;
+				}
+			}
 		}
 
 		private string GetFullName((int Year, int Month, int Day, int Hour) group)
