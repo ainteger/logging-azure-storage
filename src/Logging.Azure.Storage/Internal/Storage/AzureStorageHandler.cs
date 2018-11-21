@@ -45,7 +45,7 @@ namespace Logging.Azure.Storage.Internal.Storage
 			return request;
 		}
 
-		private string GetAuthorizationHeader(HttpMethod method, DateTime now, HttpRequestMessage request)
+		public string GetAuthorizationHeader(HttpMethod method, DateTime now, HttpRequestMessage request)
 		{
 			var messageSignature = string.Format("{0}\n\n\n{1}\n\n\n\n\n\n\n\n\n{2}{3}",
 					method,
@@ -57,7 +57,7 @@ namespace Logging.Azure.Storage.Internal.Storage
 			return $"SharedKey {StorageAccount}:{GetSignature(messageSignature)}";
 		}
 
-		private string GetSignature(string messageSignature)
+		public string GetSignature(string messageSignature)
 		{
 			var signatureBytes = Encoding.UTF8.GetBytes(messageSignature);
 			var SHA256 = new System.Security.Cryptography.HMACSHA256(Convert.FromBase64String(StorageKey));
