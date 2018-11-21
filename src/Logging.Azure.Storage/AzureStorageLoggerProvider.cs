@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Logging.Azure.Storage
 {
 	/// <summary>
-	/// An <see cref="ILoggerProvider" /> that writes logs to a file
+	/// An <see cref="ILoggerProvider" /> that writes logs to Azure Blob Storage
 	/// </summary>
 	[ProviderAlias("AzureBlobStorage")]
 	public class AzureStorageLoggerProvider : BatchingLoggerProvider
@@ -79,7 +79,7 @@ namespace Logging.Azure.Storage
 		}
 
 		/// <summary>
-		/// Deletes old log files, keeping a number of files defined by <see cref="AzureStorageLoggerOptions.RetainedBlobCountLimit" />
+		/// Deletes old log blobs, keeping a number of blobs defined by <see cref="AzureStorageLoggerOptions.RetainedBlobCountLimit" />
 		/// </summary>
 		protected async Task RollFilesAsync()
 		{

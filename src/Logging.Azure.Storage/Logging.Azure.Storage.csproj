@@ -2,16 +2,29 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Ainteger.Logging.Azure.Storage</PackageId>
+    <Authors>Andreas Litzell Ivarsson</Authors>
+    <Company>ainteger</Company>
+    <Product>Logging in Azure Blob Storage</Product>
+    <Description>Extensions for adding the AzureStorageLoggerProvider to the ILoggingBuilder</Description>
+    <Copyright>Copyright (c) 2018 Andreas Litzell Ivarsson</Copyright>
+    <PackageLicenseUrl>https://github.com/ainteger/logging-azure-storage/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ainteger/logging-azure-storage</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ainteger/logging-azure-storage</RepositoryUrl>
+    <PackageTags>azure storage logging</PackageTags>
+    <PackageReleaseNotes>First version with full logging possibilities</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.WebUtilities">
-      <HintPath>..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.webutilities\2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>  
 
 </Project>

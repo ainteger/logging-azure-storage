@@ -12,7 +12,14 @@ namespace Logging.Azure.Storage
 		private int retainedBlobCountLimit = 2;
 		private string blobNamePrefix = "logs-";
 
+		/// <summary>
+		/// Gets or sets Azure Storage Account Name
+		/// </summary>
 		public string StorageAccountName { get; set; }
+
+		/// <summary>
+		/// Gets or sets Azure Storage Key
+		/// </summary>
 		public string StorageKey { get; set; }
 
 		/// <summary>

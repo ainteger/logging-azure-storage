@@ -6,10 +6,11 @@ namespace Logging.Azure.Storage.Internal
 	{
 		private int? batchSize = 32;
 		private int? backgroundQueueSize;
-		private TimeSpan flushPeriod = TimeSpan.FromSeconds(1);
+		private TimeSpan flushPeriod = TimeSpan.FromSeconds(10);
 
 		/// <summary>
 		/// Gets or sets the period after which logs will be flushed to the store.
+		/// Default to <c>10</c>
 		/// </summary>
 		public TimeSpan FlushPeriod
 		{
