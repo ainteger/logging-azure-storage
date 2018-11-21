@@ -68,14 +68,14 @@ namespace Logging.Azure.Storage
 			await RollFilesAsync();
 		}
 
-		private string GetFullName((int Year, int Month, int Day) group)
+		private string GetFullName((int Year, int Month, int Day, int Hour) group)
 		{
-			return $"{group.Year:0000}/{group.Month:00}/{BlobNamePrefix}{group.Year:0000}{group.Month:00}{group.Day:00}.log";
+			return $"{group.Year:0000}/{group.Month:00}/{group.Day:00}/{BlobNamePrefix}{group.Year:0000}{group.Month:00}{group.Day:00}{group.Hour:00}.log";
 		}
 
-		private (int Year, int Month, int Day) GetGrouping(LogMessage message)
+		private (int Year, int Month, int Day, int Hour) GetGrouping(LogMessage message)
 		{
-			return (message.Timestamp.Year, message.Timestamp.Month, message.Timestamp.Day);
+			return (message.Timestamp.Year, message.Timestamp.Month, message.Timestamp.Day, message.Timestamp.Hour);
 		}
 
 		/// <summary>
