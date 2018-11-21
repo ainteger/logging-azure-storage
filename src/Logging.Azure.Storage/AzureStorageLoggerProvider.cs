@@ -52,11 +52,15 @@ namespace Logging.Azure.Storage
 
 				using (var streamWriter = new MemoryStream())
 				{
-					await streamWriter.WriteAsync(blob);
+					var position = 0;
+					await streamWriter.WriteAsync(blob, position, blob.Length);
+					position += blob.Length;
 
 					foreach (var item in group)
 					{
-						await streamWriter.WriteAsync(Encoding.ASCII.GetBytes(item.Message));
+						var message = Encoding.ASCII.GetBytes(item.Message);
+						await streamWriter.WriteAsync(message, position, message.Length);
+						position += message.Length;
 					}
 
 					var data = streamWriter.ToArray();
