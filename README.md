@@ -2,9 +2,13 @@
 
 Use Azure Blob Storage to log application logs
 
+## Notes
+
+Options at registration is mandatory, StorageAccountName, StorageKey must be set. Container needs to be created in Blob Storage Account to be able to use the package. 
+
 ## nuget
 
-Project will be uploaded soon
+https://www.nuget.org/packages/Ainteger.Logging.Azure.Storage/
 
 ## Sample code
 
